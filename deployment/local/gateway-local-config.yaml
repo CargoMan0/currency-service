@@ -6,7 +6,7 @@ auth:
   timeout_seconds: 10
 
 grpc:
-  currency_service_url: "currency:8090"
+  currency_service_url: "localhost:8090"
 
 test_user_credentials:
   login: "test"

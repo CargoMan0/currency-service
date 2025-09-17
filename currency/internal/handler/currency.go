@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/BernsteinMondy/currency-service/currency/internal/dto"
 	"github.com/BernsteinMondy/currency-service/pkg/currency"
@@ -10,6 +11,10 @@ import (
 
 func (s CurrencyServer) GetRate(ctx context.Context, request *currency.GetRateRequest) (*currency.GetRateResponse, error) {
 	reqDTO := dto.CurrencyRequestFromPbToDTO(request, dto.DefaultBaseCurrency)
+
+	if reqDTO.TargetCurrency == dto.DefaultBaseCurrency {
+		return nil, errors.New("target currency can not be equal to base currency")
+	}
 
 	rates, err := s.service.GetCurrencyRatesInInterval(ctx, reqDTO)
 	if err != nil {

@@ -51,11 +51,13 @@ func (c *controller) Logout(ctx *gin.Context) {
 		return
 	}
 
-	err := c.authService.Logout(ctx.Request.Context(), token)
-	if err != nil {
-		c.handleError(ctx, err)
-		return
-	}
+	/*
+		err := c.authService.Logout(ctx.Request.Context(), token)
+		if err != nil {
+			c.handleError(ctx, err)
+			return
+		}
+	*/
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "logout successful"})
 }

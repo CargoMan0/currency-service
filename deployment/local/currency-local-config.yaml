@@ -12,7 +12,7 @@ database:
   password: "admin"
   name: "currency_db"
   ssl_mode: "disable"
-  migrations_path: "./currency/internal/migrations"
+  migrations_path: "."
 
 worker:
   schedule: "@daily"

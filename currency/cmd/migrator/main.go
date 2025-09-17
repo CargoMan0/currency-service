@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/BernsteinMondy/currency-service/currency/internal/config"
 	"github.com/BernsteinMondy/currency-service/currency/internal/migrations"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/spf13/viper"
 	"log"
 )

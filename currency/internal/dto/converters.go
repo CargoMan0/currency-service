@@ -2,7 +2,6 @@ package dto
 
 import (
 	"github.com/BernsteinMondy/currency-service/pkg/currency"
-	"time"
 )
 
 func CurrencyRequestFromPbToDTO(req *currency.GetRateRequest, baseCurrency string) *CurrencyRequestDTO {
