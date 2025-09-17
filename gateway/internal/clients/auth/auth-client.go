@@ -36,7 +36,7 @@ func NewClient(cfg config.AuthConfig) (*Client, error) {
 			Transport:     nil,
 			CheckRedirect: nil,
 			Jar:           nil,
-			Timeout:       time.Duration(cfg.ClientTimeout) * time.Second,
+			Timeout:       time.Duration(cfg.TimeoutSeconds) * time.Second,
 		},
 	}, nil
 }

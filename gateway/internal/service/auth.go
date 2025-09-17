@@ -22,10 +22,7 @@ type AuthService struct {
 	authClient AuthClient
 }
 
-func NewAuthService(
-	repository UserRepository,
-	authClient AuthClient,
-) *AuthService {
+func NewAuthService(repository UserRepository, authClient AuthClient) *AuthService {
 	return &AuthService{
 		repository: repository,
 		authClient: authClient,

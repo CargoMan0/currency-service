@@ -18,8 +18,8 @@ type ServerConfig struct {
 }
 
 type AuthConfig struct {
-	BaseURL       string `mapstructure:"base_url"`
-	ClientTimeout int    `mapstructure:"client_timeout"`
+	BaseURL        string `mapstructure:"base_url"`
+	TimeoutSeconds int    `mapstructure:"timeout_seconds"`
 }
 
 type GRPCConfig struct {

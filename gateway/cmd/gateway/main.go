@@ -29,9 +29,14 @@ func main() {
 }
 
 func run() (err error) {
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	ctx, stop := signal.NotifyContext(
+		context.Background(),
+		syscall.SIGINT,
+		syscall.SIGTERM,
+	)
 	defer stop()
 
+	// Init logger
 	logger, err := zap.NewProduction()
 	if err != nil {
 		return fmt.Errorf("init logger: %w", err)
@@ -52,15 +57,18 @@ func run() (err error) {
 
 	logger.Info("Server initializing with config", zap.Any("config", cfg))
 
+	// Init router
 	router := gin.New()
 	router.Use(ginzap.Ginzap(logger, time.RFC3339, true))
 	router.Use(ginzap.RecoveryWithZap(logger, true))
 
+	// New auth client
 	authClient, err := auth.NewClient(cfg.Auth)
 	if err != nil {
 		return fmt.Errorf("create new auth client: %w", err)
 	}
 
+	// Check if auth client is alive
 	resp, err := authClient.Ping()
 	if err != nil {
 		return fmt.Errorf("check if auth service is alive: %w", err)
@@ -70,29 +78,40 @@ func run() (err error) {
 		return fmt.Errorf("auth client answered with invalid response: %w", err)
 	}
 
+	// New auth middleware
 	authMiddleware := middleware.NewAuthorization(authClient, logger, shouldSkipAuthMiddleware)
 	router.Use(authMiddleware.Authorize())
 
+	// New grpc client for Currency.
 	currencyClient, conn, err := grpc_client.NewCurrencyGRPCClient(cfg.GRPC.CurrencyServiceURL)
 	if err != nil {
 		return fmt.Errorf("create new grpc client %w", err)
 	}
 	defer func() {
+		logger.Info("Closing gRPC connection with Currency...")
 		closeErr := conn.Close()
 		if closeErr != nil {
 			err = errors.Join(err, fmt.Errorf("close connection: %w", closeErr))
 			logger.Warn("Cannot close GRPC Client for auth service", zap.Error(err))
 		}
+
+		logger.Info("gRPC connection with Currency closed")
 	}()
 
+	// Repository
 	userRepo := repository.NewUserRepository()
+
+	// Service
 	authService := service.NewAuthService(userRepo, authClient)
 	currencyService := service.NewCurrencyService(currencyClient)
 
+	// Prepare test user
 	err = prepareTestUser(ctx, userRepo, cfg.TestUserCredentials)
 	if err != nil {
 		return fmt.Errorf("prepare test user: %w", err)
 	}
+
+	// HTTP server
 
 	srv := &http.Server{
 		Addr:    cfg.Server.Port,
