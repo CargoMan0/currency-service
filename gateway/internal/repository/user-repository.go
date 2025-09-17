@@ -22,7 +22,7 @@ func NewUserRepository() *UserRepository {
 	}
 }
 
-func (ur *UserRepository) SaveUser(ctx context.Context, user User) error {
+func (ur *UserRepository) SaveUser(_ context.Context, user User) error {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
@@ -35,7 +35,7 @@ func (ur *UserRepository) SaveUser(ctx context.Context, user User) error {
 	return nil
 }
 
-func (ur *UserRepository) GetUserByLogin(ctx context.Context, login string) (User, error) {
+func (ur *UserRepository) GetUserByLogin(_ context.Context, login string) (User, error) {
 	ur.mu.RLock()
 	defer ur.mu.RUnlock()
 
