@@ -1,0 +1,9 @@
+server:
+  port: ":8081"
+
+auth:
+  base_url: "http://localhost:8080"
+  client_timeout: 5
+
+grpc:
+  currency_service_url: "currency:8090"

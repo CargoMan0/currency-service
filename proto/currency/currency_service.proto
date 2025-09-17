@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package currency;
+
+option go_package = "pkg/currency";
+
+service CurrencyService {
+  rpc GetRate(GetRateRequest) returns (GetRateResponse);
+}
+
+message GetRateRequest {
+  string currency = 1;
+  google.protobuf.Timestamp date_from = 2;
+  google.protobuf.Timestamp date_to = 3;
+}
+
+message GetRateResponse {
+  string currency = 1;
+  repeated RateRecord rates = 2;
+}
+
+message RateRecord {
+  google.protobuf.Timestamp date = 1;
+  float rate = 2;
+}
