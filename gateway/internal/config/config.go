@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"fmt"
 	"github.com/spf13/viper"
 )
@@ -24,7 +25,9 @@ type GRPCConfig struct {
 	CurrencyServiceURL string `mapstructure:"currency_service_url"`
 }
 
-func Load(path string) (Config, error) {
+func Load() (Config, error) {
+	path := getPath()
+
 	var cfg Config
 	viper.SetConfigFile(path)
 
@@ -37,4 +40,11 @@ func Load(path string) (Config, error) {
 	}
 
 	return cfg, nil
+}
+
+func getPath() string {
+	configPath := flag.String("config", "./config", "path to the config file")
+	flag.Parse()
+
+	return *configPath
 }

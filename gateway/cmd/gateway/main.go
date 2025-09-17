@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/clients/auth"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/config"
@@ -33,11 +32,7 @@ func run() (err error) {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	configPath := flag.String("config", "./config", "path to the config file")
-
-	flag.Parse()
-
-	cfg, err := config.Load(*configPath)
+	cfg, err := config.Load()
 	if err != nil {
 		return fmt.Errorf("load config: %w", err)
 	}
