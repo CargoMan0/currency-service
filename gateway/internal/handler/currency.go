@@ -30,6 +30,16 @@ func (c *controller) GetCurrencyRates(ctx *gin.Context) {
 		return
 	}
 
+	if dateFrom.After(dateTo) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "date_from cannot be after date_to"})
+		return
+	}
+
+	if dateTo.Before(dateFrom) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "date_to cannot be before date_from"})
+		return
+	}
+
 	parsedCurrencyRequest := dto.ParsedCurrencyRequest{
 		Currency: req.Currency,
 		DateFrom: dateFrom,
