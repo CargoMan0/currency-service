@@ -87,6 +87,11 @@ func run() (err error) {
 	authService := service.NewAuthService(userRepo, authClient)
 	currencyService := service.NewCurrencyService(currencyClient)
 
+	err = prepareTestUser(ctx, userRepo, cfg.TestUserCredentials)
+	if err != nil {
+		return fmt.Errorf("prepare test user: %w", err)
+	}
+
 	srv := &http.Server{
 		Addr:    cfg.Server.Port,
 		Handler: router,
@@ -105,7 +110,9 @@ func run() (err error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err = srv.Shutdown(ctx); err != nil {
+
+	err = srv.Shutdown(ctx)
+	if err != nil {
 		return fmt.Errorf("shutdown: %w", err)
 	}
 
@@ -120,4 +127,18 @@ func shouldSkipAuthMiddleware(c *gin.Context) bool {
 	}
 
 	return false
+}
+
+func prepareTestUser(ctx context.Context, repo *repository.UserRepository, cfg config.TestUserCredentials) error {
+	user := repository.User{
+		Login:    cfg.Login,
+		Password: cfg.Password,
+	}
+
+	err := repo.SaveUser(ctx, user)
+	if err != nil {
+		return fmt.Errorf("repository: save user: %w", err)
+	}
+
+	return nil
 }

@@ -7,3 +7,7 @@ auth:
 
 grpc:
   currency_service_url: "currency:8090"
+
+test_user_credentials:
+  login: test
+  password: test

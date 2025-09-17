@@ -24,6 +24,8 @@ func (s *controller) handleError(c *gin.Context, err error) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 	case errors.Is(err, service.ErrAlreadyExists):
 		c.JSON(http.StatusConflict, gin.H{"error": "User already exist"})
+	case errors.Is(err, service.ErrInvalidCredentials):
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 	case errors.Is(err, auth.ErrUnexpectedStatusCode):
 		log.Printf("unexpected status code error: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unexpected server error"})

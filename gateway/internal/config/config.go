@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	Server ServerConfig `mapstructure:"server"`
-	Auth   AuthConfig   `mapstructure:"auth"`
-	GRPC   GRPCConfig   `mapstructure:"grpc"`
+	Server              ServerConfig        `mapstructure:"server"`
+	Auth                AuthConfig          `mapstructure:"auth"`
+	GRPC                GRPCConfig          `mapstructure:"grpc"`
+	TestUserCredentials TestUserCredentials `mapstructure:"test_user_credentials"`
 }
 
 type ServerConfig struct {
@@ -23,6 +24,11 @@ type AuthConfig struct {
 
 type GRPCConfig struct {
 	CurrencyServiceURL string `mapstructure:"currency_service_url"`
+}
+
+type TestUserCredentials struct {
+	Login    string `mapstructure:"login"`
+	Password string `mapstructure:"password"`
 }
 
 func Load() (Config, error) {
