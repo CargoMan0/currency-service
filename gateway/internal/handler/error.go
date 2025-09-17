@@ -11,10 +11,10 @@ import (
 )
 
 func (c *controller) handleError(ctx *gin.Context, err error) {
-	var nferr customerr.NotFoundError
-	if errors.As(err, &nferr) {
+	var custom customerr.NotFoundError
+	if errors.As(err, &custom) {
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"error": nferr.Error(),
+			"error": custom.Error(),
 		})
 	}
 
