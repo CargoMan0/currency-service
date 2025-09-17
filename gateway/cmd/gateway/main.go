@@ -91,11 +91,10 @@ func run() (err error) {
 		logger.Info("Closing gRPC connection with Currency...")
 		closeErr := conn.Close()
 		if closeErr != nil {
-			err = errors.Join(err, fmt.Errorf("close connection: %w", closeErr))
-			logger.Warn("Cannot close GRPC Client for auth service", zap.Error(err))
+			logger.Warn("Failed to close gRPC connection with Currency", zap.Error(err))
+		} else {
+			logger.Info("gRPC connection with Currency closed")
 		}
-
-		logger.Info("gRPC connection with Currency closed")
 	}()
 
 	// Repository
@@ -112,7 +111,6 @@ func run() (err error) {
 	}
 
 	// HTTP server
-
 	srv := &http.Server{
 		Addr:    cfg.Server.Port,
 		Handler: router,
