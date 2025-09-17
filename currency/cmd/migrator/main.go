@@ -20,7 +20,7 @@ func main() {
 	}
 }
 
-func run() (err error) {
+func run() error {
 	cfg, err := loadConfig()
 	if err != nil {
 		return fmt.Errorf("failed to load config: %w", err)
