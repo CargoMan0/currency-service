@@ -60,10 +60,3 @@ func (a *Authorization) Authorize() gin.HandlerFunc {
 		c.Next()
 	}
 }
-
-func shouldSkipEndpoint(c *gin.Context) bool {
-	if c.Request.URL.Path == "/login" {
-		return true
-	}
-	return false
-}
