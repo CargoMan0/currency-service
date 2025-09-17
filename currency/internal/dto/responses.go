@@ -32,3 +32,8 @@ func (dto *CurrencyResponseDTO) ToProtobuf() *currency.GetRateResponse {
 		Rates:    rateRecords,
 	}
 }
+
+type RatesResponse struct {
+	Date string             `json:"date"`
+	Rub  map[string]float64 `json:"rub"`
+}

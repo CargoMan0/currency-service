@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BernsteinMondy/currency-service/currency/internal/config"
+	"github.com/BernsteinMondy/currency-service/currency/internal/dto"
 	"go.uber.org/zap"
 	"io"
 	"net/http"
@@ -39,25 +40,20 @@ func NewClient(cfg config.CurrencyAPIConfig, logger *zap.Logger) (*Currency, err
 	}, nil
 }
 
-type RatesResponse struct {
-	Date string             `json:"date"`
-	Rub  map[string]float64 `json:"rub"`
-}
-
-func (c *Currency) FetchCurrentRates(ctx context.Context, currency string) (_ RatesResponse, err error) {
+func (c *Currency) FetchCurrentRates(ctx context.Context, currency string) (_ dto.RatesResponse, err error) {
 	relativeCurrencyPath, _ := url.Parse(fmt.Sprintf("/v1/currencies/%s.json", strings.ToLower(currency)))
 	fullURL := *c.baseURL.ResolveReference(relativeCurrencyPath)
 
 	fullURLStr := fullURL.String()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURLStr, http.NoBody)
 	if err != nil {
-		return RatesResponse{}, fmt.Errorf("failed to create request: %w", err)
+		return dto.RatesResponse{}, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	resp, err := c.httpClient.Do(req)
 
 	if err != nil {
-		return RatesResponse{}, fmt.Errorf("failed to make request to currency API: %w", err)
+		return dto.RatesResponse{}, fmt.Errorf("failed to make request to currency API: %w", err)
 	}
 
 	defer func() {
@@ -69,17 +65,17 @@ func (c *Currency) FetchCurrentRates(ctx context.Context, currency string) (_ Ra
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return RatesResponse{}, fmt.Errorf("received non-200 response code: %d", resp.StatusCode)
+		return dto.RatesResponse{}, fmt.Errorf("received non-200 response code: %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return RatesResponse{}, fmt.Errorf("failed to read response body: %w", err)
+		return dto.RatesResponse{}, fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	var rateResponse RatesResponse
+	var rateResponse dto.RatesResponse
 	if err := json.Unmarshal(body, &rateResponse); err != nil {
-		return RatesResponse{}, fmt.Errorf("failed to unmarshal response: %w", err)
+		return dto.RatesResponse{}, fmt.Errorf("failed to unmarshal response: %w", err)
 	}
 
 	return rateResponse, nil

@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/BernsteinMondy/currency-service/currency/internal/clients/currency"
 	"github.com/BernsteinMondy/currency-service/currency/internal/dto"
 	"github.com/BernsteinMondy/currency-service/currency/internal/repository"
 	"go.uber.org/zap"
@@ -17,7 +16,7 @@ type Repository interface {
 }
 
 type CurrencyAPIClient interface {
-	FetchCurrentRates(ctx context.Context, currency string) (currency.RatesResponse, error)
+	FetchCurrentRates(ctx context.Context, currency string) (dto.RatesResponse, error)
 }
 
 type Currency struct {
