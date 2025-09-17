@@ -3,11 +3,11 @@ server:
 
 auth:
   base_url: "http://localhost:8080"
-  client_timeout: 5
+  timeout_seconds: 10
 
 grpc:
   currency_service_url: "currency:8090"
 
 test_user_credentials:
-  login: test
-  password: test
+  login: "test"
+  password: "test"

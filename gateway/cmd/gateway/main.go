@@ -32,15 +32,17 @@ func run() (err error) {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	cfg, err := config.Load()
-	if err != nil {
-		return fmt.Errorf("load config: %w", err)
-	}
-
 	logger, err := zap.NewProduction()
 	if err != nil {
 		return fmt.Errorf("init logger: %w", err)
 	}
+
+	logger.Info("Loading config...")
+	cfg, err := config.Load()
+	if err != nil {
+		return fmt.Errorf("load config: %w", err)
+	}
+	logger.Info("Config loaded")
 
 	select {
 	case <-ctx.Done():

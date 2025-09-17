@@ -5,6 +5,9 @@ go 1.24.4
 require (
 	github.com/gin-contrib/zap v1.1.5
 	github.com/gin-gonic/gin v1.10.1
+	github.com/golang-migrate/migrate v3.5.4+incompatible
+	github.com/lib/pq v1.10.9
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/viper v1.21.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.75.1

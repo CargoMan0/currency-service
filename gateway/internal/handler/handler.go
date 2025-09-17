@@ -1,22 +1,32 @@
 package handler
 
 import (
-	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
+	"context"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
 )
 
 type controller struct {
-	authService     *service.AuthService
-	currencyService *service.CurrencyService
+	authService     AuthService
+	currencyService CurrencyService
 	router          *gin.Engine
 	logger          *zap.Logger
 }
 
+type AuthService interface {
+	Login(ctx context.Context, login, password string) (string, error)
+	Register(ctx context.Context, login, password string) error
+}
+
+type CurrencyService interface {
+	GetCurrencyRates(ctx context.Context, request dto.ParsedCurrencyRequest) (*dto.CurrencyResponse, error)
+}
+
 func RegisterRoutes(
-	authService *service.AuthService,
-	currencyService *service.CurrencyService,
+	authService AuthService,
+	currencyService CurrencyService,
 	router *gin.Engine,
 	logger *zap.Logger) controller {
 
