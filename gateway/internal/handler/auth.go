@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -10,6 +11,7 @@ func (c *controller) Login(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&req)
 	if err != nil {
+		c.logger.Error("Error binding request parameters", zap.Error(err))
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -28,6 +30,7 @@ func (c *controller) Register(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&req)
 	if err != nil {
+		c.logger.Error("Error binding request parameters", zap.Error(err))
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

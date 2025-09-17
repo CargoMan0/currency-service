@@ -10,10 +10,10 @@ import (
 	"net/http"
 )
 
-func (s *controller) handleError(c *gin.Context, err error) {
+func (c *controller) handleError(ctx *gin.Context, err error) {
 	var nferr customerr.NotFoundError
 	if errors.As(err, &nferr) {
-		c.JSON(http.StatusNotFound, gin.H{
+		ctx.JSON(http.StatusNotFound, gin.H{
 			"error": nferr.Error(),
 		})
 	}
@@ -21,26 +21,26 @@ func (s *controller) handleError(c *gin.Context, err error) {
 	log.Printf("internal error: %v", err)
 	switch {
 	case errors.Is(err, service.ErrNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 	case errors.Is(err, service.ErrAlreadyExists):
-		c.JSON(http.StatusConflict, gin.H{"error": "User already exist"})
+		ctx.JSON(http.StatusConflict, gin.H{"error": "User already exist"})
 	case errors.Is(err, service.ErrInvalidCredentials):
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 	case errors.Is(err, auth.ErrUnexpectedStatusCode):
 		log.Printf("unexpected status code error: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unexpected server error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unexpected server error"})
 	case errors.Is(err, auth.ErrInvalidCredentials):
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 	case errors.Is(err, auth.ErrTokenGeneration):
-		c.JSON(
+		ctx.JSON(
 			http.StatusInternalServerError,
 			gin.H{"error": "Failed to generate token"},
 		)
 	case errors.Is(err, auth.ErrTokenNotFound):
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Token not found"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Token not found"})
 	case errors.Is(err, auth.ErrInvalidOrExpiredToken):
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token is invalid or expired"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Token is invalid or expired"})
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 	}
 }
