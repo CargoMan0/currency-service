@@ -17,12 +17,12 @@ func RunPgMigrations(cfg config.DatabaseConfig) error {
 	}
 
 	m, err := migrate.New(cfg.MigrationsPath, dsn)
-
 	if err != nil {
 		return fmt.Errorf("failed to create migration instance: %w", err)
 	}
 
-	if err = m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+	err = m.Up()
+	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("failed to run up migrations: %w", err)
 	}
 
