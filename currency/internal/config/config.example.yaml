@@ -16,6 +16,7 @@ database:
 
 worker:
   schedule: "@daily"
+  timeout_seconds: 5
   currency_pair:
     base_currency: "RUB"
     target_currency: "USD"
