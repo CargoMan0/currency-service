@@ -2,8 +2,7 @@ package handler
 
 import (
 	"errors"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/clients/auth"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
+	apperrors "github.com/BernsteinMondy/currency-service/gateway/internal/errors"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -12,26 +11,12 @@ import (
 func (c *controller) handleError(ctx *gin.Context, err error) {
 	log.Printf("internal error: %v", err)
 	switch {
-	case errors.Is(err, service.ErrNotFound):
+	case errors.Is(err, apperrors.ErrNotFound):
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-	case errors.Is(err, service.ErrAlreadyExists):
+	case errors.Is(err, apperrors.ErrAlreadyExists):
 		ctx.JSON(http.StatusConflict, gin.H{"error": "User already exist"})
-	case errors.Is(err, service.ErrInvalidCredentials):
+	case errors.Is(err, apperrors.ErrInvalidCredentials):
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-	case errors.Is(err, auth.ErrUnexpectedStatusCode):
-		log.Printf("unexpected status code error: %v", err)
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unexpected server error"})
-	case errors.Is(err, auth.ErrInvalidCredentials):
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-	case errors.Is(err, auth.ErrTokenGeneration):
-		ctx.JSON(
-			http.StatusInternalServerError,
-			gin.H{"error": "Failed to generate token"},
-		)
-	case errors.Is(err, auth.ErrTokenNotFound):
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Token not found"})
-	case errors.Is(err, auth.ErrInvalidOrExpiredToken):
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Token is invalid or expired"})
 	default:
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	apperrors "github.com/BernsteinMondy/currency-service/gateway/internal/errors"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/models"
 )
 
@@ -37,8 +38,8 @@ func (s *AuthService) Register(ctx context.Context, login, password string) erro
 
 	err := s.repository.SaveUser(ctx, user)
 	if err != nil {
-		if errors.Is(err, ErrRepoAlreadyExists) {
-			return ErrAlreadyExists
+		if errors.Is(err, apperrors.ErrRepoAlreadyExists) {
+			return apperrors.ErrAlreadyExists
 		}
 		return fmt.Errorf("repository: save user: %w", err)
 	}
@@ -49,18 +50,24 @@ func (s *AuthService) Register(ctx context.Context, login, password string) erro
 func (s *AuthService) Login(ctx context.Context, login, password string) (string, error) {
 	user, err := s.repository.GetUserByLogin(ctx, login)
 	if err != nil {
-		if errors.Is(err, ErrRepoNotFound) {
-			return "", ErrNotFound
+		if errors.Is(err, apperrors.ErrRepoNotFound) {
+			return "", apperrors.ErrNotFound
 		}
 		return "", fmt.Errorf("repository: get user by login: %w", err)
 	}
 
 	if user.Password != password {
-		return "", ErrInvalidCredentials
+		return "", apperrors.ErrInvalidCredentials
 	}
 
 	token, err := s.authClient.GenerateToken(ctx, login)
 	if err != nil {
+		if errors.Is(err, apperrors.ErrClientTokenGeneration) {
+			return "", apperrors.ErrClientUnexpectedStatusCode
+		}
+		if errors.Is(err, apperrors.ErrClientInvalidCredentials) {
+			return "", apperrors.ErrInvalidCredentials
+		}
 		return "", fmt.Errorf("repository: generate token: %w", err)
 	}
 
