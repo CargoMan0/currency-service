@@ -43,21 +43,3 @@ func (c *controller) Register(ctx *gin.Context) {
 
 	ctx.Status(http.StatusCreated)
 }
-
-func (c *controller) Logout(ctx *gin.Context) {
-	token := ctx.GetHeader("Authorization")
-	if token == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Authorization token is required"})
-		return
-	}
-
-	/*
-		err := c.authService.Logout(ctx.Request.Context(), token)
-		if err != nil {
-			c.handleError(ctx, err)
-			return
-		}
-	*/
-
-	ctx.JSON(http.StatusOK, gin.H{"message": "logout successful"})
-}

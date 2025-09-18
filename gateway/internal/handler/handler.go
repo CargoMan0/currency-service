@@ -46,7 +46,6 @@ func RegisterRoutes(
 	ctrl.router.GET("/api/v1/rate", ctrl.GetCurrencyRates)
 	ctrl.router.POST("/api/v1/login", ctrl.Login)
 	ctrl.router.POST("/api/v1/register", ctrl.Register)
-	ctrl.router.POST("/api/v1/logout", ctrl.Logout)
 
 	return ctrl
 }
