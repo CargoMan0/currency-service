@@ -23,7 +23,7 @@ func RunPgMigrations(cfg config.DatabaseConfig) error {
 		return errors.New("path must not be empty")
 	}
 
-	d, err := iofs.New(fs, ".")
+	d, err := iofs.New(fs, cfg.MigrationsPath)
 	if err != nil {
 		return fmt.Errorf("iofs.New(): %w", err)
 	}
