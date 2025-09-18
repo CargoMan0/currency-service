@@ -62,14 +62,19 @@ func (s *AuthService) Login(ctx context.Context, login, password string) (string
 
 	token, err := s.authClient.GenerateToken(ctx, login)
 	if err != nil {
-		if errors.Is(err, apperrors.ErrClientTokenGeneration) {
-			return "", apperrors.ErrClientUnexpectedStatusCode
-		}
-		if errors.Is(err, apperrors.ErrClientInvalidCredentials) {
-			return "", apperrors.ErrInvalidCredentials
-		}
-		return "", fmt.Errorf("repository: generate token: %w", err)
+		return "", s.parseClientErrorToDomain(err)
 	}
 
 	return token, nil
+}
+
+func (s *AuthService) parseClientErrorToDomain(err error) error {
+	switch {
+	case errors.Is(err, apperrors.ErrClientInvalidCredentials):
+		return apperrors.ErrInvalidCredentials
+	case errors.Is(err, apperrors.ErrClientTokenGeneration):
+		return apperrors.ErrInvalidCredentials
+	default:
+		return fmt.Errorf("unexpected error returned from client: %w", err)
+	}
 }
