@@ -7,12 +7,13 @@ import (
 	"github.com/BernsteinMondy/currency-service/currency/internal/dto"
 	"github.com/BernsteinMondy/currency-service/pkg/currency"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"strings"
 )
 
 func (s CurrencyServer) GetRate(ctx context.Context, request *currency.GetRateRequest) (*currency.GetRateResponse, error) {
 	reqDTO := dto.CurrencyRequestFromPbToDTO(request, dto.DefaultBaseCurrency)
 
-	if reqDTO.TargetCurrency == dto.DefaultBaseCurrency {
+	if strings.ToUpper(reqDTO.TargetCurrency) == dto.DefaultBaseCurrency {
 		return nil, errors.New("target currency can not be equal to base currency")
 	}
 

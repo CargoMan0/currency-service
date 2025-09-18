@@ -41,7 +41,7 @@ func (s *Currency) GetCurrencyRatesInInterval(ctx context.Context, reqDTO *dto.C
 	reqDTO.TargetCurrency = strings.ToLower(reqDTO.TargetCurrency)
 	rates, err := s.currencyRepo.GetCurrencyExchangeRatesInInterval(ctx, reqDTO)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch currency rates in interval: %w", err)
+		return nil, fmt.Errorf("currency repo: get currency exchange rates in interval: %w", err)
 	}
 
 	return rates, nil
