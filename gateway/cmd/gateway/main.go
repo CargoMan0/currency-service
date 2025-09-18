@@ -8,6 +8,7 @@ import (
 	"github.com/BernsteinMondy/currency-service/gateway/internal/config"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/handler"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/middleware"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/models"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/repository"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
 	"github.com/BernsteinMondy/currency-service/pkg/grpc_client"
@@ -149,7 +150,7 @@ func shouldSkipAuthMiddleware(c *gin.Context) bool {
 }
 
 func prepareTestUser(ctx context.Context, repo *repository.UserRepository, cfg config.TestUserCredentials) error {
-	user := repository.User{
+	user := models.User{
 		Login:    cfg.Login,
 		Password: cfg.Password,
 	}
