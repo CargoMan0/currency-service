@@ -6,9 +6,8 @@ import (
 )
 
 type Metrics struct {
-	Counter   *prometheus.CounterVec
-	Latency   *prometheus.HistogramVec
-	AppUptime prometheus.Gauge
+	Counter *prometheus.CounterVec
+	Latency *prometheus.HistogramVec
 }
 
 func Init() (*Metrics, error) {
@@ -29,13 +28,6 @@ func Init() (*Metrics, error) {
 		[]string{"method"},
 	)
 
-	appUptime := prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Name: "currency_service_uptime_seconds",
-			Help: "Time since service start in seconds",
-		},
-	)
-
 	err := prometheus.Register(requestCount)
 	if err != nil {
 		return nil, fmt.Errorf("error registering requests metrics: %w", err)
@@ -45,14 +37,8 @@ func Init() (*Metrics, error) {
 		return nil, fmt.Errorf("error registering requests duration metrics: %w", err)
 	}
 
-	err = prometheus.Register(appUptime)
-	if err != nil {
-		return nil, fmt.Errorf("error registering requests app uptime metrics: %w", err)
-	}
-
 	return &Metrics{
-		Counter:   requestCount,
-		Latency:   requestDuration,
-		AppUptime: appUptime,
+		Counter: requestCount,
+		Latency: requestDuration,
 	}, nil
 }
