@@ -4,24 +4,28 @@ import (
 	"context"
 	"fmt"
 	"github.com/BernsteinMondy/currency-service/currency/internal/config"
-	"github.com/BernsteinMondy/currency-service/currency/internal/service"
 	"github.com/robfig/cron/v3"
 	"go.uber.org/zap"
 	"time"
 )
 
+type CurrencyService interface {
+	FetchAndSaveCurrencyRates(ctx context.Context, baseCurrency string) error
+}
+
 type Currency struct {
-	currencyService service.Currency
+	currencyService CurrencyService
 	cron            *cron.Cron
 	schedule        string
 	baseCurrency    string
 	targetCurrency  string
+	timeoutSeconds  int
 	logger          *zap.Logger
 }
 
 func NewCurrency(
 	cfg config.WorkerConfig,
-	service service.Currency,
+	service CurrencyService,
 	cron *cron.Cron,
 	logger *zap.Logger,
 ) *Currency {
@@ -37,11 +41,10 @@ func NewCurrency(
 
 func (w *Currency) StartFetchingCurrencyRates() error {
 	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5) // todo move to config
+		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(w.timeoutSeconds)*time.Second)
 		defer cancel()
 
 		err := w.currencyService.FetchAndSaveCurrencyRates(ctx, w.baseCurrency)
-
 		if err != nil {
 			w.logger.Error(
 				"Failed to fetch currency rate immediately on startup",
@@ -53,7 +56,7 @@ func (w *Currency) StartFetchingCurrencyRates() error {
 
 	_, err := w.cron.AddFunc(
 		w.schedule, func() {
-			ctx, cancel := context.WithTimeout(context.Background(), time.Second*5) // todo move to config
+			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(w.timeoutSeconds)*time.Second)
 			defer cancel()
 
 			err := w.currencyService.FetchAndSaveCurrencyRates(ctx, w.baseCurrency)
@@ -67,13 +70,11 @@ func (w *Currency) StartFetchingCurrencyRates() error {
 			}
 		},
 	)
-
 	if err != nil {
-		return fmt.Errorf("Cron.AddFunc: %w", err)
+		return fmt.Errorf("add func to cron: %w", err)
 	}
 
 	w.cron.Start()
-
 	return nil
 }
 

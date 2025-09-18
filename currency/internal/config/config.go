@@ -40,8 +40,9 @@ func (cfg DatabaseConfig) ToDSN() string {
 }
 
 type WorkerConfig struct {
-	Schedule     string `mapstructure:"schedule"`
-	CurrencyPair struct {
+	Schedule      string `mapstructure:"schedule"`
+	TimoutSeconds int    `mapstructure:"timeout_seconds"`
+	CurrencyPair  struct {
 		BaseCurrency   string `mapstructure:"base_currency"`
 		TargetCurrency string `mapstructure:"target_currency"`
 	} `mapstructure:"currency_pair"`

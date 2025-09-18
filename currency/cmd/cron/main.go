@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
+	"github.com/BernsteinMondy/currency-service/currency/internal/clients/currency"
 	"github.com/BernsteinMondy/currency-service/currency/internal/config"
+	"github.com/BernsteinMondy/currency-service/currency/internal/repository"
 	"github.com/BernsteinMondy/currency-service/currency/internal/service"
 	"github.com/BernsteinMondy/currency-service/currency/internal/worker"
 	"github.com/BernsteinMondy/currency-service/pkg/database"
@@ -21,51 +25,49 @@ func main() {
 }
 
 func run() (err error) {
-	cfg, err := config.Load()
-	if err != nil {
-		return fmt.Errorf("load config: %w", err)
-	}
+	ctx, stop := signal.NotifyContext(
+		context.Background(),
+		syscall.SIGINT,
+		syscall.SIGTERM,
+	)
+	defer stop()
 
-	db, err := database.NewConnection(cfg.Database)
-	if err != nil {
-		return fmt.Errorf("create new connection: %w", err)
-	}
-
-	return nil
-}
-
-func main() {
-
-	repo, err := repository.NewCurrency(db)
-	if err != nil {
-		log.Fatalf("error creating repository: %v", err)
-	}
-
-	// Logger инициировать как можно раньше.
+	// Init logger
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("init logger: %w", err)
 	}
 
-	client, err := currency.New(cfg.API, logger)
+	// Load config
+	cfg, err := config.Load()
+	if err != nil {
+		return fmt.Errorf("load config: %w", err)
+	}
+
+	// New database connection
+	db, err := openDatabaseConnection(cfg.Database)
+	if err != nil {
+		return fmt.Errorf("create new connection: %w", err)
+	}
+
+	// New repository
+	repo := repository.New(db)
+
+	// New currency client
+	client, err := currency.NewClient(cfg.CurrencyAPI, logger)
 	if err != nil {
 		log.Fatalf("error creating currency client: %v", err)
 	}
 
+	// New service
 	svc := service.NewCurrency(repo, client, logger)
 
+	// New cron job and start worker
 	c := cron.New()
 
 	currencyWorker := worker.NewCurrency(cfg.Worker, svc, c, logger)
-
+	err = currencyWorker.StartFetchingCurrencyRates()
 	if err != nil {
-		log.Fatalf("error adding cron job: %v", err)
-	}
-
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
-
-	if err := currencyWorker.StartFetchingCurrencyRates(); err != nil {
 		log.Fatalf("error start fetching currency rates: %v", err)
 	}
 
@@ -74,4 +76,23 @@ func main() {
 	log.Println("shutting down gracefully, press Ctrl+C again to force")
 
 	currencyWorker.Stop()
+	return nil
+}
+
+func openDatabaseConnection(cfg config.DatabaseConfig) (*sql.DB, error) {
+	c := &database.Config{
+		Host:     cfg.Host,
+		Port:     cfg.Port,
+		User:     cfg.User,
+		Password: cfg.Password,
+		DBName:   cfg.Name,
+		SSLMode:  cfg.SSLMode,
+	}
+
+	db, err := database.NewConnection(c)
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
