@@ -92,7 +92,10 @@ func run() (err error) {
 	)
 
 	// Init metrics
-	mtrcs := metrics.Init()
+	mtrcs, err := metrics.Init()
+	if err != nil {
+		return fmt.Errorf("error initializing metrics: %w", err)
+	}
 
 	// Init middleware
 	mw := middleware.Init(mtrcs, logger)

@@ -1,6 +1,9 @@
 package metrics
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
+)
 
 type Metrics struct {
 	Counter   *prometheus.CounterVec
@@ -8,7 +11,7 @@ type Metrics struct {
 	AppUptime prometheus.Gauge
 }
 
-func Init() *Metrics {
+func Init() (*Metrics, error) {
 	requestCount := prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "currency_requests_total",
@@ -32,9 +35,24 @@ func Init() *Metrics {
 			Help: "Time since service start in seconds",
 		},
 	)
+
+	err := prometheus.Register(requestCount)
+	if err != nil {
+		return nil, fmt.Errorf("error registering requests metrics: %w", err)
+	}
+	err = prometheus.Register(requestDuration)
+	if err != nil {
+		return nil, fmt.Errorf("error registering requests duration metrics: %w", err)
+	}
+
+	err = prometheus.Register(appUptime)
+	if err != nil {
+		return nil, fmt.Errorf("error registering requests app uptime metrics: %w", err)
+	}
+
 	return &Metrics{
 		Counter:   requestCount,
 		Latency:   requestDuration,
 		AppUptime: appUptime,
-	}
+	}, nil
 }
