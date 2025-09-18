@@ -4,12 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/repository"
 )
 
+type User struct {
+	Login    string
+	Password string
+}
+
 type UserRepository interface {
-	SaveUser(ctx context.Context, user repository.User) error
-	GetUserByLogin(ctx context.Context, login string) (repository.User, error)
+	SaveUser(ctx context.Context, user User) error
+	GetUserByLogin(ctx context.Context, login string) (User, error)
 }
 
 type AuthClient interface {
@@ -30,14 +34,14 @@ func NewAuthService(repository UserRepository, authClient AuthClient) *AuthServi
 }
 
 func (s *AuthService) Register(ctx context.Context, login, password string) error {
-	user := repository.User{
+	user := User{
 		Login:    login,
 		Password: password,
 	}
 
 	err := s.repository.SaveUser(ctx, user)
 	if err != nil {
-		if errors.Is(err, repository.ErrRepoAlreadyExists) {
+		if errors.Is(err, ErrRepoAlreadyExists) {
 			return ErrAlreadyExists
 		}
 		return fmt.Errorf("repository: save user: %w", err)
@@ -49,7 +53,7 @@ func (s *AuthService) Register(ctx context.Context, login, password string) erro
 func (s *AuthService) Login(ctx context.Context, login, password string) (string, error) {
 	user, err := s.repository.GetUserByLogin(ctx, login)
 	if err != nil {
-		if errors.Is(err, repository.ErrRepoNotFound) {
+		if errors.Is(err, ErrRepoNotFound) {
 			return "", ErrNotFound
 		}
 		return "", fmt.Errorf("repository: get user by login: %w", err)
@@ -65,8 +69,4 @@ func (s *AuthService) Login(ctx context.Context, login, password string) (string
 	}
 
 	return token, nil
-}
-
-func (s *AuthService) Logout(ctx context.Context, token string) error {
-	return nil
 }

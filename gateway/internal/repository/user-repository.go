@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
 	"sync"
 )
 
@@ -22,7 +23,7 @@ func NewUserRepository() *UserRepository {
 	}
 }
 
-func (ur *UserRepository) SaveUser(_ context.Context, user User) error {
+func (ur *UserRepository) SaveUser(_ context.Context, user service.User) error {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
@@ -31,18 +32,18 @@ func (ur *UserRepository) SaveUser(_ context.Context, user User) error {
 		return ErrRepoAlreadyExists
 	}
 
-	ur.users[user.Login] = user
+	ur.users[user.Login] = User(user)
 	return nil
 }
 
-func (ur *UserRepository) GetUserByLogin(_ context.Context, login string) (User, error) {
+func (ur *UserRepository) GetUserByLogin(_ context.Context, login string) (service.User, error) {
 	ur.mu.RLock()
 	defer ur.mu.RUnlock()
 
 	user, exists := ur.users[login]
 	if !exists {
-		return User{}, ErrRepoNotFound
+		return service.User{}, ErrRepoNotFound
 	}
 
-	return user, nil
+	return service.User(user), nil
 }
