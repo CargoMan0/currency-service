@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/clients/auth"
-	customerr "github.com/BernsteinMondy/currency-service/gateway/internal/errors"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -11,13 +10,6 @@ import (
 )
 
 func (c *controller) handleError(ctx *gin.Context, err error) {
-	var custom customerr.NotFoundError
-	if errors.As(err, &custom) {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"error": custom.Error(),
-		})
-	}
-
 	log.Printf("internal error: %v", err)
 	switch {
 	case errors.Is(err, service.ErrNotFound):
