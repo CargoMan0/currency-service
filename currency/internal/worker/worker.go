@@ -35,6 +35,7 @@ func NewCurrency(
 		schedule:        cfg.Schedule,
 		baseCurrency:    cfg.CurrencyPair.BaseCurrency,
 		targetCurrency:  cfg.CurrencyPair.TargetCurrency,
+		timeoutSeconds:  cfg.TimoutSeconds,
 		logger:          logger,
 	}
 }
