@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/models/dto"
 	"github.com/BernsteinMondy/currency-service/pkg/currency"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

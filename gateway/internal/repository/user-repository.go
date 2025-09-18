@@ -2,48 +2,51 @@ package repository
 
 import (
 	"context"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/models"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
 	"sync"
 )
 
-type User struct {
-	Login    string
-	Password string
-}
-
 type UserRepository struct {
-	users map[string]User
+	users map[string]models.RepoUser
 	mu    *sync.RWMutex
 }
 
 func NewUserRepository() *UserRepository {
 	return &UserRepository{
-		users: make(map[string]User),
+		users: make(map[string]models.RepoUser),
 		mu:    &sync.RWMutex{},
 	}
 }
 
-func (ur *UserRepository) SaveUser(_ context.Context, user service.User) error {
+func (ur *UserRepository) SaveUser(_ context.Context, user models.User) error {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
 	_, exists := ur.users[user.Login]
 	if exists {
-		return ErrRepoAlreadyExists
+		return service.ErrRepoAlreadyExists
 	}
 
-	ur.users[user.Login] = User(user)
+	ur.users[user.Login] = models.RepoUser{
+		Login:    user.Login,
+		Password: user.Password,
+	}
+
 	return nil
 }
 
-func (ur *UserRepository) GetUserByLogin(_ context.Context, login string) (service.User, error) {
+func (ur *UserRepository) GetUserByLogin(_ context.Context, login string) (models.User, error) {
 	ur.mu.RLock()
 	defer ur.mu.RUnlock()
 
 	user, exists := ur.users[login]
 	if !exists {
-		return service.User{}, ErrRepoNotFound
+		return models.User{}, service.ErrRepoNotFound
 	}
 
-	return service.User(user), nil
+	return models.User{
+		Login:    user.Login,
+		Password: user.Password,
+	}, nil
 }

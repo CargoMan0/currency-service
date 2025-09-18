@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/models/dto"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"

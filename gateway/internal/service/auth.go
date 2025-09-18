@@ -4,16 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/models"
 )
 
-type User struct {
-	Login    string
-	Password string
-}
-
 type UserRepository interface {
-	SaveUser(ctx context.Context, user User) error
-	GetUserByLogin(ctx context.Context, login string) (User, error)
+	SaveUser(ctx context.Context, user models.User) error
+	GetUserByLogin(ctx context.Context, login string) (models.User, error)
 }
 
 type AuthClient interface {
@@ -34,7 +30,7 @@ func NewAuthService(repository UserRepository, authClient AuthClient) *AuthServi
 }
 
 func (s *AuthService) Register(ctx context.Context, login, password string) error {
-	user := User{
+	user := models.User{
 		Login:    login,
 		Password: password,
 	}
