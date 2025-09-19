@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
 	"time"
 )
 
@@ -21,7 +21,7 @@ type currencyRequest struct {
 	DateTo   string `form:"date_to" binding:"required,datetime=2006-01-02"`
 }
 
-func currencyResponseFromServiceToDTO(currencyResp *service.CurrencyResponse) *currencyResponse {
+func currencyResponseFromServiceToDTO(currencyResp *dto.CurrencyResponse) *currencyResponse {
 	rates := make([]currencyRate, 0, len(currencyResp.Rates))
 
 	for _, rate := range currencyResp.Rates {

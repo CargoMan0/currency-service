@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
@@ -21,7 +21,7 @@ type AuthService interface {
 }
 
 type CurrencyService interface {
-	GetCurrencyRates(ctx context.Context, request service.CurrencyRequest) (*service.CurrencyResponse, error)
+	GetCurrencyRates(ctx context.Context, request dto.CurrencyRequest) (*dto.CurrencyResponse, error)
 }
 
 func RegisterRoutes(
