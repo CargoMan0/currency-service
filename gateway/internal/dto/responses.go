@@ -2,6 +2,12 @@ package dto
 
 import "time"
 
+type CurrencyRequest struct {
+	Currency string
+	DateFrom time.Time
+	DateTo   time.Time
+}
+
 type CurrencyResponse struct {
 	Currency string
 	Rates    []CurrencyRate

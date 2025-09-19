@@ -12,6 +12,8 @@ type UserRepository struct {
 	mu    *sync.RWMutex
 }
 
+var _ service.UserRepository = (*UserRepository)(nil)
+
 func NewUserRepository() *UserRepository {
 	return &UserRepository{
 		users: make(map[string]repoUser),

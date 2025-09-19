@@ -6,6 +6,7 @@ import (
 	"fmt"
 	errors2 "github.com/BernsteinMondy/currency-service/gateway/internal/clients/auth/errors"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/config"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
 	"io"
 	"net/http"
 	"net/url"
@@ -24,6 +25,8 @@ type Client struct {
 	baseURL    *url.URL
 	httpClient *http.Client
 }
+
+var _ service.AuthClient = (*Client)(nil)
 
 func NewClient(cfg config.AuthConfig) (*Client, error) {
 	parsedURL, err := url.Parse(cfg.BaseURL)

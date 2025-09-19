@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
 )
 
 type CurrencyService struct {
@@ -10,7 +11,7 @@ type CurrencyService struct {
 }
 
 type CurrencyClient interface {
-	GetCurrencyRates(ctx context.Context, request CurrencyRequest) (*CurrencyResponse, error)
+	GetCurrencyRates(ctx context.Context, request dto.CurrencyRequest) (*dto.CurrencyResponse, error)
 }
 
 func NewCurrencyService(currencyClient CurrencyClient) *CurrencyService {
@@ -19,7 +20,7 @@ func NewCurrencyService(currencyClient CurrencyClient) *CurrencyService {
 	}
 }
 
-func (svc *CurrencyService) GetCurrencyRates(ctx context.Context, request CurrencyRequest) (*CurrencyResponse, error) {
+func (svc *CurrencyService) GetCurrencyRates(ctx context.Context, request dto.CurrencyRequest) (*dto.CurrencyResponse, error) {
 	resp, err := svc.currencyClient.GetCurrencyRates(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("currency client: get currency rates: %w", err)

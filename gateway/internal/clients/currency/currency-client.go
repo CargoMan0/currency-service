@@ -3,6 +3,7 @@ package currency
 import (
 	"context"
 	"fmt"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
 	"github.com/BernsteinMondy/currency-service/pkg/currency"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -12,13 +13,15 @@ type Client struct {
 	currencyGRPCClient currency.CurrencyServiceClient
 }
 
+var _ service.CurrencyClient = (*Client)(nil)
+
 func NewClient(currencyGRPCClient currency.CurrencyServiceClient) *Client {
 	return &Client{
 		currencyGRPCClient: currencyGRPCClient,
 	}
 }
 
-func (c *Client) GetCurrencyRates(ctx context.Context, request service.CurrencyRequest) (*service.CurrencyResponse, error) {
+func (c *Client) GetCurrencyRates(ctx context.Context, request dto.CurrencyRequest) (*dto.CurrencyResponse, error) {
 	pbResp, err := c.currencyGRPCClient.GetRate(
 		ctx, &currency.GetRateRequest{
 			Currency: request.Currency,
@@ -31,14 +34,14 @@ func (c *Client) GetCurrencyRates(ctx context.Context, request service.CurrencyR
 		return nil, fmt.Errorf("currency grpc client: get currency rate: %s", err)
 	}
 
-	resp := &service.CurrencyResponse{
+	resp := &dto.CurrencyResponse{
 		Currency: pbResp.GetCurrency(),
-		Rates:    make([]service.CurrencyRate, 0, len(pbResp.Rates)),
+		Rates:    make([]dto.CurrencyRate, 0, len(pbResp.Rates)),
 	}
 
 	for _, rate := range pbResp.Rates {
 		resp.Rates = append(
-			resp.Rates, service.CurrencyRate{
+			resp.Rates, dto.CurrencyRate{
 				Rate: rate.Rate,
 				Date: rate.Date.AsTime(),
 			},
