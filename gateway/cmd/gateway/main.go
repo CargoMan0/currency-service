@@ -9,7 +9,7 @@ import (
 	"github.com/BernsteinMondy/currency-service/gateway/internal/handler"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/middleware"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/models"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/repository"
+	errors2 "github.com/BernsteinMondy/currency-service/gateway/internal/repository"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
 	"github.com/BernsteinMondy/currency-service/pkg/grpc_client"
 	ginzap "github.com/gin-contrib/zap"
@@ -99,7 +99,7 @@ func run() (err error) {
 	}()
 
 	// Repository
-	userRepo := repository.NewUserRepository()
+	userRepo := errors2.NewUserRepository()
 
 	// Service
 	authService := service.NewAuthService(userRepo, authClient)
@@ -149,7 +149,7 @@ func shouldSkipAuthMiddleware(c *gin.Context) bool {
 	return false
 }
 
-func prepareTestUser(ctx context.Context, repo *repository.UserRepository, cfg config.TestUserCredentials) error {
+func prepareTestUser(ctx context.Context, repo *errors2.UserRepository, cfg config.TestUserCredentials) error {
 	user := models.User{
 		Login:    cfg.Login,
 		Password: cfg.Password,

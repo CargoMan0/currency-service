@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	apperrors "github.com/BernsteinMondy/currency-service/gateway/internal/errors"
+	authClientErrors "github.com/BernsteinMondy/currency-service/gateway/internal/clients/auth/errors"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/models"
+	repoErrors "github.com/BernsteinMondy/currency-service/gateway/internal/repository/errors"
+	errors2 "github.com/BernsteinMondy/currency-service/gateway/internal/service/errors"
 )
 
 type UserRepository interface {
@@ -38,8 +40,8 @@ func (s *AuthService) Register(ctx context.Context, login, password string) erro
 
 	err := s.repository.SaveUser(ctx, user)
 	if err != nil {
-		if errors.Is(err, apperrors.ErrRepoAlreadyExists) {
-			return apperrors.ErrAlreadyExists
+		if errors.Is(err, repoErrors.ErrRepoAlreadyExists) {
+			return errors2.ErrAlreadyExists
 		}
 		return fmt.Errorf("repository: save user: %w", err)
 	}
@@ -50,30 +52,30 @@ func (s *AuthService) Register(ctx context.Context, login, password string) erro
 func (s *AuthService) Login(ctx context.Context, login, password string) (string, error) {
 	user, err := s.repository.GetUserByLogin(ctx, login)
 	if err != nil {
-		if errors.Is(err, apperrors.ErrRepoNotFound) {
-			return "", apperrors.ErrNotFound
+		if errors.Is(err, repoErrors.ErrRepoNotFound) {
+			return "", errors2.ErrNotFound
 		}
 		return "", fmt.Errorf("repository: get user by login: %w", err)
 	}
 
 	if user.Password != password {
-		return "", apperrors.ErrInvalidCredentials
+		return "", errors2.ErrInvalidCredentials
 	}
 
 	token, err := s.authClient.GenerateToken(ctx, login)
 	if err != nil {
-		return "", s.parseClientErrorToDomain(err)
+		return "", s.mapAuthClientError(err)
 	}
 
 	return token, nil
 }
 
-func (s *AuthService) parseClientErrorToDomain(err error) error {
+func (s *AuthService) mapAuthClientError(err error) error {
 	switch {
-	case errors.Is(err, apperrors.ErrClientInvalidCredentials):
-		return apperrors.ErrInvalidCredentials
-	case errors.Is(err, apperrors.ErrClientTokenGeneration):
-		return apperrors.ErrInvalidCredentials
+	case errors.Is(err, authClientErrors.ErrClientInvalidCredentials):
+		return errors2.ErrInvalidCredentials
+	case errors.Is(err, authClientErrors.ErrClientTokenGeneration):
+		return errors2.ErrInvalidCredentials
 	default:
 		return fmt.Errorf("unexpected error returned from client: %w", err)
 	}

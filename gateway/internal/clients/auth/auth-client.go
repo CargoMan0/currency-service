@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	errors2 "github.com/BernsteinMondy/currency-service/gateway/internal/clients/auth/errors"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/config"
-	apperrors "github.com/BernsteinMondy/currency-service/gateway/internal/errors"
 	"io"
 	"net/http"
 	"net/url"
@@ -101,11 +101,11 @@ func (c *Client) GenerateToken(ctx context.Context, login string) (_ string, err
 		}
 		return string(bodyBytes), nil
 	case http.StatusBadRequest:
-		return "", fmt.Errorf("%w: bad request", apperrors.ErrClientTokenGeneration)
+		return "", fmt.Errorf("%w: bad request", errors2.ErrClientTokenGeneration)
 	case http.StatusUnauthorized:
-		return "", fmt.Errorf("%w: unauthorized", apperrors.ErrClientInvalidCredentials)
+		return "", fmt.Errorf("%w: unauthorized", errors2.ErrClientInvalidCredentials)
 	default:
-		return "", fmt.Errorf("%w: %d", apperrors.ErrClientUnexpectedStatusCode, resp.StatusCode)
+		return "", fmt.Errorf("%w: %d", errors2.ErrClientUnexpectedStatusCode, resp.StatusCode)
 	}
 }
 
@@ -143,10 +143,10 @@ func (c *Client) ValidateToken(ctx context.Context, token string) (err error) {
 
 	switch resp.StatusCode {
 	case http.StatusBadRequest:
-		return fmt.Errorf("%w: %s", apperrors.ErrClientTokenNotFound, errorMessage)
+		return fmt.Errorf("%w: %s", errors2.ErrClientTokenNotFound, errorMessage)
 	case http.StatusUnauthorized:
-		return fmt.Errorf("%w: %s", apperrors.ErrClientInvalidOrExpiredToken, errorMessage)
+		return fmt.Errorf("%w: %s", errors2.ErrClientInvalidOrExpiredToken, errorMessage)
 	default:
-		return fmt.Errorf("%w %d: %s", apperrors.ErrClientUnexpectedStatusCode, resp.StatusCode, errorMessage)
+		return fmt.Errorf("%w %d: %s", errors2.ErrClientUnexpectedStatusCode, resp.StatusCode, errorMessage)
 	}
 }

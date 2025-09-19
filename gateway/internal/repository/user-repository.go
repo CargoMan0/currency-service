@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	apperrors "github.com/BernsteinMondy/currency-service/gateway/internal/errors"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/models"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/repository/errors"
 	"sync"
 )
 
@@ -25,7 +25,7 @@ func (ur *UserRepository) SaveUser(_ context.Context, user models.User) error {
 
 	_, exists := ur.users[user.Login]
 	if exists {
-		return apperrors.ErrRepoAlreadyExists
+		return errors.ErrRepoAlreadyExists
 	}
 
 	ur.users[user.Login] = models.RepoUser{
@@ -42,7 +42,7 @@ func (ur *UserRepository) GetUserByLogin(_ context.Context, login string) (model
 
 	user, exists := ur.users[login]
 	if !exists {
-		return models.User{}, apperrors.ErrRepoNotFound
+		return models.User{}, errors.ErrRepoNotFound
 	}
 
 	return models.User{
