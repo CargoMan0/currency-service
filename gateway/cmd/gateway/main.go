@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/clients/auth"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/clients/currency"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/config"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/handler"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/middleware"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/models"
 	errors2 "github.com/BernsteinMondy/currency-service/gateway/internal/repository"
 	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
 	"github.com/BernsteinMondy/currency-service/pkg/grpc_client"
@@ -68,6 +68,11 @@ func run() (err error) {
 	if err != nil {
 		return fmt.Errorf("create new auth client: %w", err)
 	}
+	defer func() {
+		logger.Info("Closing idle connections with AuthClient...")
+		authClient.CloseIdleConnections()
+		logger.Info("Idle connections with AuthClient closed")
+	}()
 
 	// Check if auth client is alive
 	resp, err := authClient.Ping()
@@ -84,7 +89,7 @@ func run() (err error) {
 	router.Use(authMiddleware.Authorize())
 
 	// New grpc client for Currency.
-	currencyClient, conn, err := grpc_client.NewCurrencyGRPCClient(cfg.GRPC.CurrencyServiceURL)
+	currencyGRPCClient, conn, err := grpc_client.NewCurrencyGRPCClient(cfg.GRPC.CurrencyServiceURL)
 	if err != nil {
 		return fmt.Errorf("create new grpc client %w", err)
 	}
@@ -92,11 +97,13 @@ func run() (err error) {
 		logger.Info("Closing gRPC connection with Currency...")
 		closeErr := conn.Close()
 		if closeErr != nil {
-			logger.Warn("Failed to close gRPC connection with Currency", zap.Error(err))
+			logger.Warn("Failed to close gRPC connection with Currency", zap.Error(closeErr))
 		} else {
 			logger.Info("gRPC connection with Currency closed")
 		}
 	}()
+
+	currencyClient := currency.NewClient(currencyGRPCClient)
 
 	// Repository
 	userRepo := errors2.NewUserRepository()
@@ -150,7 +157,7 @@ func shouldSkipAuthMiddleware(c *gin.Context) bool {
 }
 
 func prepareTestUser(ctx context.Context, repo *errors2.UserRepository, cfg config.TestUserCredentials) error {
-	user := models.User{
+	user := service.User{
 		Login:    cfg.Login,
 		Password: cfg.Password,
 	}

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/BernsteinMondy/currency-service/gateway/internal/models/dto"
+	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
@@ -40,7 +40,7 @@ func (c *controller) GetCurrencyRates(ctx *gin.Context) {
 		return
 	}
 
-	parsedCurrencyRequest := dto.ParsedCurrencyRequest{
+	parsedCurrencyRequest := service.CurrencyRequest{
 		Currency: req.Currency,
 		DateFrom: dateFrom,
 		DateTo:   dateTo,
@@ -52,5 +52,7 @@ func (c *controller) GetCurrencyRates(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, data)
+	dto := currencyResponseFromServiceToDTO(data)
+
+	ctx.JSON(http.StatusOK, dto)
 }

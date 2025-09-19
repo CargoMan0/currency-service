@@ -42,6 +42,10 @@ func NewClient(cfg config.AuthConfig) (*Client, error) {
 	}, nil
 }
 
+func (c *Client) CloseIdleConnections() {
+	c.httpClient.CloseIdleConnections()
+}
+
 func (c *Client) Ping() (_ string, err error) {
 	relativePingPath, _ := url.Parse(pingPath)
 	fullURL := *c.baseURL.ResolveReference(relativePingPath)
@@ -77,7 +81,7 @@ func (c *Client) GenerateToken(ctx context.Context, login string) (_ string, err
 	query.Set("login", login)
 	fullURL.RawQuery = query.Encode()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURL.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURL.String(), http.NoBody)
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %w", err)
 	}
@@ -112,7 +116,7 @@ func (c *Client) GenerateToken(ctx context.Context, login string) (_ string, err
 func (c *Client) ValidateToken(ctx context.Context, token string) (err error) {
 	relativeValidatePath, _ := url.Parse(validatePath)
 	fullURL := *c.baseURL.ResolveReference(relativeValidatePath)
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURL.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURL.String(), http.NoBody)
 	if err != nil {
 		return fmt.Errorf("http.NewRequest: %w", err)
 	}
