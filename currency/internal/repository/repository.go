@@ -7,12 +7,15 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BernsteinMondy/currency-service/currency/internal/dto"
+	"github.com/BernsteinMondy/currency-service/currency/internal/service"
 	"time"
 )
 
 type Repository struct {
 	db *sql.DB
 }
+
+var _ service.Repository = (*Repository)(nil)
 
 func New(db *sql.DB) *Repository {
 	return &Repository{
