@@ -1,0 +1,13 @@
+server:
+  port: ":8082"
+
+auth:
+  base_url: "http://localhost:8080"
+  timeout_seconds: 10
+
+grpc:
+  currency_service_url: "localhost:8090"
+
+test_user_credentials:
+  login: "test"
+  password: "test"
