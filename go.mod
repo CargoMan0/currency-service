@@ -1,4 +1,4 @@
-module github.com/BernsteinMondy/currency-service
+module github.com/CargoMan0/currency-service
 
 go 1.24.4
 
