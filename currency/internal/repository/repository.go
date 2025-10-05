@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/BernsteinMondy/currency-service/currency/internal/dto"
-	"github.com/BernsteinMondy/currency-service/currency/internal/service"
+	"github.com/CargoMan0/currency-service/currency/internal/dto"
+	"github.com/CargoMan0/currency-service/currency/internal/service"
 	"time"
 )
 

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
+	"github.com/CargoMan0/currency-service/gateway/internal/dto"
 	"time"
 )
 

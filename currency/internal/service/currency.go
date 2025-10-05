@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/BernsteinMondy/currency-service/currency/internal/dto"
-	"github.com/BernsteinMondy/currency-service/currency/internal/repository"
+	"github.com/CargoMan0/currency-service/currency/internal/dto"
+	"github.com/CargoMan0/currency-service/currency/internal/repository"
 	"go.uber.org/zap"
 	"strings"
 	"time"

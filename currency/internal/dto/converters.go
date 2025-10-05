@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"github.com/BernsteinMondy/currency-service/pkg/currency"
+	"github.com/CargoMan0/currency-service/pkg/currency"
 )
 
 func CurrencyRequestFromPbToDTO(req *currency.GetRateRequest, baseCurrency string) *CurrencyRequestDTO {

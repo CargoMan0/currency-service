@@ -2,10 +2,10 @@ package handler
 
 import (
 	"context"
-	"github.com/BernsteinMondy/currency-service/currency/internal/dto"
-	"github.com/BernsteinMondy/currency-service/currency/internal/middleware"
-	"github.com/BernsteinMondy/currency-service/currency/internal/repository"
-	"github.com/BernsteinMondy/currency-service/pkg/currency"
+	"github.com/CargoMan0/currency-service/currency/internal/dto"
+	"github.com/CargoMan0/currency-service/currency/internal/middleware"
+	"github.com/CargoMan0/currency-service/currency/internal/repository"
+	"github.com/CargoMan0/currency-service/pkg/currency"
 	"go.uber.org/zap"
 )
 

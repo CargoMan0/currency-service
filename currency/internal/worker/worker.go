@@ -3,7 +3,7 @@ package worker
 import (
 	"context"
 	"fmt"
-	"github.com/BernsteinMondy/currency-service/currency/internal/config"
+	"github.com/CargoMan0/currency-service/currency/internal/config"
 	"github.com/robfig/cron/v3"
 	"go.uber.org/zap"
 	"time"

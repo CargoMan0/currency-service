@@ -2,7 +2,7 @@ package handler
 
 import (
 	"errors"
-	serviceErrors "github.com/BernsteinMondy/currency-service/gateway/internal/service/errors"
+	serviceErrors "github.com/CargoMan0/currency-service/gateway/internal/service/errors"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"

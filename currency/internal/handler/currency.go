@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/BernsteinMondy/currency-service/currency/internal/dto"
-	"github.com/BernsteinMondy/currency-service/pkg/currency"
+	"github.com/CargoMan0/currency-service/currency/internal/dto"
+	"github.com/CargoMan0/currency-service/pkg/currency"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"strings"
 )

@@ -3,9 +3,9 @@ package currency
 import (
 	"context"
 	"fmt"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
-	"github.com/BernsteinMondy/currency-service/pkg/currency"
+	"github.com/CargoMan0/currency-service/gateway/internal/dto"
+	"github.com/CargoMan0/currency-service/gateway/internal/service"
+	"github.com/CargoMan0/currency-service/pkg/currency"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

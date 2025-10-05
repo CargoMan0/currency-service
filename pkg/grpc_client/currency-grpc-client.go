@@ -2,7 +2,7 @@ package grpc_client
 
 import (
 	"fmt"
-	"github.com/BernsteinMondy/currency-service/pkg/currency"
+	"github.com/CargoMan0/currency-service/pkg/currency"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

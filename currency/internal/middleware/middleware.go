@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"github.com/BernsteinMondy/currency-service/currency/internal/metrics"
+	"github.com/CargoMan0/currency-service/currency/internal/metrics"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"time"

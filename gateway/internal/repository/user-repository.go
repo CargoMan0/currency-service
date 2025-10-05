@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/repository/errors"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/service"
+	"github.com/CargoMan0/currency-service/gateway/internal/repository/errors"
+	"github.com/CargoMan0/currency-service/gateway/internal/service"
 	"sync"
 )
 

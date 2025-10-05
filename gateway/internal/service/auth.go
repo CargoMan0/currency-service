@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	authClientErrors "github.com/BernsteinMondy/currency-service/gateway/internal/clients/auth/errors"
-	repoErrors "github.com/BernsteinMondy/currency-service/gateway/internal/repository/errors"
-	serviceErrors "github.com/BernsteinMondy/currency-service/gateway/internal/service/errors"
+	authClientErrors "github.com/CargoMan0/currency-service/gateway/internal/clients/auth/errors"
+	repoErrors "github.com/CargoMan0/currency-service/gateway/internal/repository/errors"
+	serviceErrors "github.com/CargoMan0/currency-service/gateway/internal/service/errors"
 )
 
 type UserRepository interface {

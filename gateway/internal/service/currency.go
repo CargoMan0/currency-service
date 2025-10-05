@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
+	"github.com/CargoMan0/currency-service/gateway/internal/dto"
 )
 
 type CurrencyService struct {

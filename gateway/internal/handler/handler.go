@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"github.com/BernsteinMondy/currency-service/gateway/internal/dto"
+	"github.com/CargoMan0/currency-service/gateway/internal/dto"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
