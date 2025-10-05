@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/CargoMan0/currency-service/currency/internal/dto"
-	"github.com/CargoMan0/currency-service/currency/internal/repository"
 	"go.uber.org/zap"
 	"strings"
 	"time"
@@ -12,7 +11,7 @@ import (
 
 type Repository interface {
 	SaveCurrencyExchangeRates(ctx context.Context, date time.Time, baseCurrency string, rates map[string]float64) error
-	GetCurrencyExchangeRatesInInterval(ctx context.Context, dto *dto.CurrencyRequestDTO) ([]repository.CurrencyRate, error)
+	GetCurrencyExchangeRatesInInterval(ctx context.Context, dto *dto.CurrencyRequestDTO) ([]CurrencyRate, error)
 }
 
 type CurrencyAPIClient interface {
@@ -23,6 +22,11 @@ type Currency struct {
 	currencyRepo Repository
 	client       CurrencyAPIClient
 	logger       *zap.Logger
+}
+
+type CurrencyRate struct {
+	Date time.Time
+	Rate float32
 }
 
 func NewCurrency(
@@ -37,7 +41,7 @@ func NewCurrency(
 	}
 }
 
-func (s *Currency) GetCurrencyRatesInInterval(ctx context.Context, reqDTO *dto.CurrencyRequestDTO) ([]repository.CurrencyRate, error) {
+func (s *Currency) GetCurrencyRatesInInterval(ctx context.Context, reqDTO *dto.CurrencyRequestDTO) ([]CurrencyRate, error) {
 	reqDTO.TargetCurrency = strings.ToLower(reqDTO.TargetCurrency)
 	rates, err := s.currencyRepo.GetCurrencyExchangeRatesInInterval(ctx, reqDTO)
 	if err != nil {

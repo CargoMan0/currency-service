@@ -23,11 +23,6 @@ func New(db *sql.DB) *Repository {
 	}
 }
 
-type CurrencyRate struct {
-	Date time.Time
-	Rate float32
-}
-
 func (r *Repository) SaveCurrencyExchangeRates(ctx context.Context, date time.Time, baseCurrency string, rates map[string]float64) error {
 	ratesJSON, err := json.Marshal(rates)
 	if err != nil {
@@ -44,7 +39,7 @@ func (r *Repository) SaveCurrencyExchangeRates(ctx context.Context, date time.Ti
 	return nil
 }
 
-func (r *Repository) GetCurrencyExchangeRatesInInterval(ctx context.Context, dto *dto.CurrencyRequestDTO) (_ []CurrencyRate, err error) {
+func (r *Repository) GetCurrencyExchangeRatesInInterval(ctx context.Context, dto *dto.CurrencyRequestDTO) (_ []service.CurrencyRate, err error) {
 	const query = `
 		SELECT date, (currency_rates ->> $1)::float 
 		FROM exchange_rates
@@ -70,9 +65,9 @@ func (r *Repository) GetCurrencyExchangeRatesInInterval(ctx context.Context, dto
 		}
 	}()
 
-	var rates []CurrencyRate
+	var rates []service.CurrencyRate
 	for rows.Next() {
-		var rate CurrencyRate
+		var rate service.CurrencyRate
 		if err := rows.Scan(&rate.Date, &rate.Rate); err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
