@@ -9,6 +9,8 @@ This system is designed to:
 - Validate user permissions and convert user requests.
 - Fetch and store currency rates from a public API.
 
+### Architecture
+![app_architecture.png](assets/app_architecture.png)
 ## Services
 
 ### Gateway Service
